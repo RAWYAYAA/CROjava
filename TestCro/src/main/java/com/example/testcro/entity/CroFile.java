@@ -12,7 +12,6 @@ public class CroFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String filename;
 
     // Add additional fields as needed
@@ -20,7 +19,6 @@ public class CroFile {
     public CroFile() {
         // Default constructor
     }
-
     public CroFile(String filename) {
         this.filename = filename;
     }
