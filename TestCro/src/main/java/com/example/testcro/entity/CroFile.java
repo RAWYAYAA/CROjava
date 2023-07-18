@@ -14,7 +14,6 @@ public class CroFile {
     private Long id;
     private String filename;
 
-    // Add additional fields as needed
 
     public CroFile() {
         // Default constructor
@@ -39,6 +38,5 @@ public class CroFile {
         this.filename = filename;
     }
 
-    // Add additional getters and setters as needed
 }
 

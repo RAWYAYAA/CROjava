@@ -28,34 +28,31 @@ public class CroFileService {
                String data = new String(buffer, 0, bytesRead);
                fileContent.append(data);
            }
-
-           // Extraire les informations spécifiques de chaque ligne
+               // Extraire les informations spécifiques de chaque ligne
            String[] lines = fileContent.toString().split("\n");
            List<Data> result = new ArrayList<>();
-
-           for (String line : lines) {
+           for (int i = 1; i < lines.length; i++) {
+               String line = lines[i];
                Data data=new Data();
                // Extraire les informations souhaitées à l'aide des indices
-               if (line.length() >= 306) {
-               String codeBanqueRemettant = line.substring(0, 4);
-               String nomRemettant = line.substring(84, 120);
-               String numeroCheque = line.substring(170, 178);
-               String numeroCompte = line.substring(184, 198);
-               String cleCompte = line.substring(197, 200);
-               String montant = line.substring(290, 304);
-
+               String codeBanqueRemettant = line.substring(0,3);
+               String nomRemettant = line.substring(85, 120);
+               String numeroCheque = line.substring(171, 178);
+               String codeAgence=line.substring(185,190);
+               String numeroCompte = line.substring(191, 198);
+               String cleCompte = line.substring(198, 200);
+               String montant = line.substring(291, 306);
                // Stocker les informations extraites
                data.setCode_Banque_Remettant(codeBanqueRemettant);
                data.setNom_Remettant(nomRemettant);
                data.setN_Cheque(numeroCheque);
+               data.setCode_Agence(codeAgence);
                data.setN_Compte(numeroCompte);
                data.setCle_Compte(cleCompte);
                data.setMontant(montant);
                result.add(data);
-           }}
-
+           }
            return result;
        }
    }
-
 }

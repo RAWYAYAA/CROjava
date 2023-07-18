@@ -14,14 +14,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/cro-files")
 public class CroFileController {
-
     private final CroFileService croFileService;
-
     @Autowired
     public CroFileController(CroFileService croFileService) {
         this.croFileService = croFileService;
     }
-
     @GetMapping("/{filename}")
     public ResponseEntity<List<Data>> readCroFile(@PathVariable String filename) {
         try {
