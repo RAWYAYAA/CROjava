@@ -1,5 +1,16 @@
 package com.example.testcro.controller;
+import com.example.testcro.Data;
+import com.example.testcro.service.CroFileService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.List;
+
+
+
+/*
 import com.example.testcro.Data;
 import com.example.testcro.service.CroFileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +34,15 @@ public class CroFileController {
     public ResponseEntity<List<Data>> readCroFile(@PathVariable String filename) {
         try {
             List<Data> fileContent = croFileService.readCroFile(filename);
-           /* String[] lines = fileContent.split("\n");
+           */
+/* String[] lines = fileContent.split("\n");
             Set<String> fileLines = new HashSet<>();
             for (String line : lines) {
                 // Extraire les informations souhaitées de chaque ligne ici si nécessaire
                 fileLines.add(line);
             }
-*/
+*//*
+
             return ResponseEntity.ok(fileContent);
         } catch (IOException e) {
             e.printStackTrace();
@@ -37,3 +50,28 @@ public class CroFileController {
         }
     }
 }
+*/
+@RestController
+@RequestMapping("/cro-files")
+public class CroFileController {
+    private final CroFileService croFileService;
+
+    @Autowired
+    public CroFileController(CroFileService croFileService) {
+        this.croFileService = croFileService;
+    }
+
+    @GetMapping("/{filename}")
+    public ResponseEntity<List<Data>> readCroFile(@PathVariable String filename,
+                                                  @RequestParam(defaultValue = "1") int page,
+                                                  @RequestParam(defaultValue = "10") int pageSize) {
+        try {
+            List<Data> fileContent = croFileService.readCroFile(filename, page, pageSize);
+            return ResponseEntity.ok(fileContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
+
