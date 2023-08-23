@@ -1,10 +1,19 @@
 package com.example.testcro;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Data {
     private String Code_Banque_Remettant;
     private String Nom_Remettant;
     private String N_Cheque;
     private String Code_Agence;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Override
     public String toString() {
@@ -90,5 +99,13 @@ public class Data {
 
     public void setMontant(String montant) {
         Montant = montant;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

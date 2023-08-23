@@ -1,25 +1,26 @@
 package com.example.testcro.service;
 
 import com.example.testcro.Data;
+import com.example.testcro.repository.DataRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 @Service
 public class CroFileService {
-
-    public List<Data> readCroFile(String filename, int page, int pageSize) throws IOException {
+    @Autowired
+    DataRepository dataRepository;
+   /* public List<Data> readCroFile(String filename, int page, int pageSize) throws IOException {
         String filePath = "C:\\Users\\Youcode\\" + filename + ".cro";
         File file = new File(filePath);
 
@@ -65,8 +66,55 @@ public class CroFileService {
             int endIndex = Math.min(startIndex + pageSize, result.size());
             return result.subList(startIndex, endIndex);
         }
-    }
-    public int getTotalRecords(String filename) throws IOException {
+    }*/
+   public List<Data> readAndStoreCroFile(String filename, int page, int pageSize) throws IOException {
+       String filePath = "C:\\Users\\Youcode\\" + filename + ".cro";
+       File file = new File(filePath);
+
+       if (!file.exists()) {
+           throw new FileNotFoundException("File not found: " + filename);
+       }
+
+       try (FileInputStream fis = new FileInputStream(file)) {
+           byte[] buffer = new byte[1024];
+           int bytesRead;
+           StringBuilder fileContent = new StringBuilder();
+
+           while ((bytesRead = fis.read(buffer)) != -1) {
+               String data = new String(buffer, 0, bytesRead);
+               fileContent.append(data);
+           }
+
+           String[] lines = fileContent.toString().split("\n");
+           List<Data> result = new ArrayList<>();
+           int startIndex = (page - 1) * pageSize;
+           int endIndex = Math.min(startIndex + pageSize, lines.length);
+
+           for (int i = startIndex; i < endIndex; i++) {
+               String line = lines[i];
+               Data data = new Data();
+               //
+               String codeBanqueRemettant = line.substring(0, 3);
+               String nomRemettant = line.substring(84, 119);
+               String numeroCheque = line.substring(171, 178);
+               String codeAgence = line.substring(185, 190);
+               String numeroCompte = line.substring(191, 198);
+               String cleCompte = line.substring(198, 200);
+               String montant = line.substring(291, 306).replaceAll("^0*", "");
+               //
+               data.setCode_Banque_Remettant(codeBanqueRemettant);
+               data.setNom_Remettant(nomRemettant);
+               data.setN_Cheque(numeroCheque);
+               data.setCode_Agence(codeAgence);
+               data.setN_Compte(numeroCompte);
+               data.setCle_Compte(cleCompte);
+               data.setMontant(montant);
+               result.add(data);
+           }
+           return dataRepository.saveAll(result);
+       }
+   }
+    /*public int getTotalRecords(String filename) throws IOException {
         String filePath = "C:\\Users\\Youcode\\" + filename + ".cro";
         File file = new File(filePath);
 
@@ -86,25 +134,8 @@ public class CroFileService {
             // Soustraire 1 pour exclure l'en-tête de la pagination
             return lines.length - 1;
         }
-    }
-   // @Value("${files.path}")
-    private String filesPath;
-
-    /*public Resource download(String filename) {
-        try {
-            Path file = Paths.get(filesPath)
-                    .resolve(filename);
-            Resource resource = (Resource) new UrlResource(file.toUri());
-
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            } else {
-                throw new RuntimeException("Could not read the file!");
-            }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Error: " + e.getMessage());
-        }
     }*/
+
     public byte[] generatePdfTable(List<Data> dataList) throws IOException {
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage(PDRectangle.A4);
@@ -189,7 +220,7 @@ public class CroFileService {
         contentStream.showText(data.getMontant());
         contentStream.endText();
     }
-    public void downloadCroFileAsExcel(String filename, List<Data> dataList) throws IOException {
+   public void downloadCroFileAsExcel(String filename, List<Data> dataList) throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Data");
             Row headerRow = sheet.createRow(0);
@@ -214,7 +245,13 @@ public class CroFileService {
             try (FileOutputStream outputStream = new FileOutputStream(filename + ".xlsx")) {
                 workbook.write(outputStream);
             }
-        }
+              }
     }
+        public Data saveSata(){
+        Data data =new Data();
+
+        return data;
+        }
 }
+
 
