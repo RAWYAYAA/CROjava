@@ -6,7 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DataRepository extends JpaRepository<Data, Long> {
-
-    //
-    // void deleteByCreationTimeBefore(LocalDateTime expirationTime);
 }

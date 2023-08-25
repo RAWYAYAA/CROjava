@@ -22,20 +22,6 @@ public class CroFileController {
     public CroFileController(CroFileService croFileService) {
         this.croFileService = croFileService;
     }
-   /* @GetMapping("{filename}")
-    public ResponseEntity<List<Data>> readCroFile(@PathVariable String filename,
-                                                  @RequestParam(defaultValue = "1") int page,
-                                                  @RequestParam(defaultValue = "10") int pageSize) {
-        try {
-            List<Data> fileContent = croFileService.readCroFile(filename, page, pageSize);
-            return ResponseEntity.ok(fileContent);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
-
-    }*/
-
    @GetMapping("/read-cro-file")
    public List<Data> readCroFile(
            @RequestParam String filename,
@@ -67,13 +53,6 @@ public class CroFileController {
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
-    /*@DeleteMapping("/deleteExpiredData")
-    public ResponseEntity<String> deleteExpiredData() {
-        LocalDateTime expirationTime = LocalDateTime.now().minusHours(24);
-        croFileService.cleanupExpiredData();
-        return ResponseEntity.ok("Expired data deleted.");
-    }*/
-
     @GetMapping("/downloadExcel/{filename}")
     public ResponseEntity<Resource> downloadCroFileAsExcel(@PathVariable String filename,
                                                            @RequestParam(defaultValue = "1") int page,

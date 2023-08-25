@@ -7,7 +7,6 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.io.*;
@@ -19,56 +18,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Service
 public class CroFileService {
-    @Autowired
-    DataRepository dataRepository;
-   /* public List<Data> readCroFile(String filename, int page, int pageSize) throws IOException {
-        String filePath = "C:\\Users\\Youcode\\" + filename + ".cro";
-        File file = new File(filePath);
+    final DataRepository dataRepository;
 
-        if (!file.exists()) {
-            throw new FileNotFoundException("File not found: " + filename);
-        }
+    public CroFileService(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
+    }
 
-        try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            StringBuilder fileContent = new StringBuilder();
-
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                String data = new String(buffer, 0, bytesRead);
-                fileContent.append(data);
-            }
-            // Extraire les informations spécifiques de chaque ligne
-            String[] lines = fileContent.toString().split("\n");
-            List<Data> result = new ArrayList<>();
-            for (int i = 1; i < lines.length; i++) {
-                String line = lines[i];
-                Data data = new Data();
-                // Extraire les informations souhaitées à l'aide des indices
-                String codeBanqueRemettant = line.substring(0, 3);
-                String nomRemettant = line.substring(84, 119);
-                String numeroCheque = line.substring(171, 178);
-                String codeAgence = line.substring(185, 190);
-                String numeroCompte = line.substring(191, 198);
-                String cleCompte = line.substring(198, 200);
-                String montant = line.substring(291, 306).replaceAll("^0*", "");
-                // Stocker les informations extraites
-                data.setCode_Banque_Remettant(codeBanqueRemettant);
-                data.setNom_Remettant(nomRemettant);
-                data.setN_Cheque(numeroCheque);
-                data.setCode_Agence(codeAgence);
-                data.setN_Compte(numeroCompte);
-                data.setCle_Compte(cleCompte);
-                data.setMontant(montant);
-                result.add(data);
-            }
-            // Pagination
-            int startIndex = (page - 1) * pageSize;
-            int endIndex = Math.min(startIndex + pageSize, result.size());
-            return result.subList(startIndex, endIndex);
-        }
-    }*/
-   public List<Data> readAndStoreCroFile(String filename, int page, int pageSize) throws IOException {
+    public List<Data> readAndStoreCroFile(String filename, int page, int pageSize) throws IOException {
        String filePath = "C:\\Users\\Youcode\\" + filename + ".cro";
        File file = new File(filePath);
 
@@ -116,28 +72,6 @@ public class CroFileService {
        }
 
    }
-    /*public int getTotalRecords(String filename) throws IOException {
-        String filePath = "C:\\Users\\Youcode\\" + filename + ".cro";
-        File file = new File(filePath);
-
-        if (!file.exists()) {
-            throw new FileNotFoundException("File not found: " + filename);
-        }
-        try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            StringBuilder fileContent = new StringBuilder();
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                String data = new String(buffer, 0, bytesRead);
-                fileContent.append(data);
-            }
-            // Extraire les informations spécifiques de chaque ligne
-            String[] lines = fileContent.toString().split("\n");
-            // Soustraire 1 pour exclure l'en-tête de la pagination
-            return lines.length - 1;
-        }
-    }*/
-
     public byte[] generatePdfTable(List<Data> dataList) throws IOException {
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage(PDRectangle.A4);
