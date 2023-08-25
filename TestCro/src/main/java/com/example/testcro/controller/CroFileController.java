@@ -1,6 +1,6 @@
 package com.example.testcro.controller;
 
-import com.example.testcro.Data;
+import com.example.testcro.dto.Data;
 import com.example.testcro.service.CroFileService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -49,12 +49,16 @@ public class CroFileController {
            return null;
        }
    }
-/*
+    @GetMapping("/triggerCleanup")
+    public ResponseEntity<String> triggerCleanup() {
+        croFileService.triggerCleanup();
+        return ResponseEntity.ok("Cleanup triggered.");
+    }
     @GetMapping(value = "/generate-pdf/{filename}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> generatePdf(@PathVariable String filename,
                                               @RequestParam int page,
                                               @RequestParam int pageSize) throws IOException {
-        List<Data> dataList =croFileService.readCroFile(filename, page, pageSize);
+        List<Data> dataList =croFileService.readAndStoreCroFile(filename, page, pageSize);
         byte[] pdfBytes = croFileService.generatePdfTable(dataList);
 
         HttpHeaders headers = new HttpHeaders();
@@ -63,13 +67,19 @@ public class CroFileController {
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
+    /*@DeleteMapping("/deleteExpiredData")
+    public ResponseEntity<String> deleteExpiredData() {
+        LocalDateTime expirationTime = LocalDateTime.now().minusHours(24);
+        croFileService.cleanupExpiredData();
+        return ResponseEntity.ok("Expired data deleted.");
+    }*/
 
     @GetMapping("/downloadExcel/{filename}")
     public ResponseEntity<Resource> downloadCroFileAsExcel(@PathVariable String filename,
                                                            @RequestParam(defaultValue = "1") int page,
                                                            @RequestParam(defaultValue = "10") int pageSize) {
         try {
-            List<Data> fileContent = croFileService.readCroFile(filename, page, pageSize);
+            List<Data> fileContent = croFileService.readAndStoreCroFile(filename, page, pageSize);
             String excelFilename = "C:\\Users\\Youcode\\" + filename;
             croFileService.downloadCroFileAsExcel(excelFilename, fileContent);
 
@@ -89,6 +99,6 @@ public class CroFileController {
             return ResponseEntity.notFound().build();
         }
     }
-    */
+
 }
 

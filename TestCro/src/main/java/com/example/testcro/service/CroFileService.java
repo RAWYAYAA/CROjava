@@ -1,6 +1,6 @@
 package com.example.testcro.service;
 
-import com.example.testcro.Data;
+import com.example.testcro.dto.Data;
 import com.example.testcro.repository.DataRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -8,6 +8,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.ArrayList;
@@ -87,7 +88,7 @@ public class CroFileService {
 
            String[] lines = fileContent.toString().split("\n");
            List<Data> result = new ArrayList<>();
-           int startIndex = (page - 1) * pageSize;
+           int startIndex = (page - 1) * pageSize + 1;
            int endIndex = Math.min(startIndex + pageSize, lines.length);
 
            for (int i = startIndex; i < endIndex; i++) {
@@ -113,6 +114,7 @@ public class CroFileService {
            }
            return dataRepository.saveAll(result);
        }
+
    }
     /*public int getTotalRecords(String filename) throws IOException {
         String filePath = "C:\\Users\\Youcode\\" + filename + ".cro";
@@ -247,11 +249,15 @@ public class CroFileService {
             }
               }
     }
-        public Data saveSata(){
-        Data data =new Data();
+   // @Scheduled(fixedRate = 24 * 60 * 60 * 1000) // Toutes les 24 heures
+   @Scheduled(fixedRate = 60 * 1000)
+    public void cleanupExpiredData() {
+        dataRepository.deleteAll();
+    }
+    public void triggerCleanup() {
+        cleanupExpiredData();
+    }
 
-        return data;
-        }
 }
 
 

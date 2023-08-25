@@ -1,4 +1,4 @@
-package com.example.testcro;
+package com.example.testcro.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
