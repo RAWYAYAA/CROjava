@@ -1,7 +1,9 @@
 package com.example.testcro.controller;
 
-import com.example.testcro.dto.Data;
+import com.example.testcro.dto.DataDTO;
+import com.example.testcro.entity.Data;
 import com.example.testcro.service.CroFileService;
+import com.example.testcro.util.EntityUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -10,8 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-
-
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -22,19 +23,21 @@ public class CroFileController {
     public CroFileController(CroFileService croFileService) {
         this.croFileService = croFileService;
     }
-   @GetMapping("/read-cro-file")
-   public List<Data> readCroFile(
-           @RequestParam String filename,
-           @RequestParam int page,
-           @RequestParam int pageSize
-   ) {
-       try {
-           return croFileService.readAndStoreCroFile(filename, page, pageSize);
-       } catch (IOException e) {
-           e.printStackTrace();
-           return null;
-       }
-   }
+    @GetMapping("/read-cro-file")
+    public List<DataDTO> readCroFile(
+            @RequestParam String filename,
+            @RequestParam int page,
+            @RequestParam int pageSize
+    ) {
+        try {
+            List<Data>  dataList =croFileService.readAndStoreCroFile(filename, page, pageSize);
+            List<DataDTO> dataDTOList = dataList.stream().map(data -> EntityUtils.dataToDataDTO(data)).collect(Collectors.toList());
+            return dataDTOList;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     @GetMapping("/triggerCleanup")
     public ResponseEntity<String> triggerCleanup() {
         croFileService.triggerCleanup();

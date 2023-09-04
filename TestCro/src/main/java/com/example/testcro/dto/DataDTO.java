@@ -6,15 +6,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
-@Entity
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @ToString
-public class Data {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class DataDTO {
     private Long id;
     private String Code_Banque_Remettant;
     private String Nom_Remettant;
